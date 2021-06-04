@@ -220,16 +220,19 @@ def task2_b():
 
 def task2_c():
     H = calc_H(N=14, J = 1, g = 1)
+
     E_list = []
-    for trans_eigenvalue, h in H.items():
-        print(trans_eigenvalue)
-        E, vec = scipy.sparse.linalg.eigsh(h, k=5, M=None, sigma=None, which='SA')
-        E_list.append(E)
-        k = h.shape[0]
-        plt.plot(np.linspace(0,5,5), E, label="EV = {}".format(trans_eigenvalue))
+    # for trans_eigenvalue, h in H.items():
+    #     E, vec = scipy.sparse.linalg.eigsh(h, k=5, M=None, sigma=None, which='SA')
+    #     E_list.append(E)
+    #     plt.plot(trans_eigenvalue*np.ones(len(E)), np.real(E), 'o', label="EV = {}".format(trans_eigenvalue))
+
+
+    for qn in H:
+        print(qn)
 
     plt.legend()
-    plt.savefig("k_versus_energies.png")
+    plt.show()
 
 if __name__ == "__main__":
     task2_c()
