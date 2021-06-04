@@ -66,22 +66,53 @@ class MatrixProductStates():
     @task_decorator
     def task1c(self):
         E, psi0 = self.get_ground_state()
+        print(psi0.shape)
         Mns = self.compress(psi0, self.L, 10)
+        print([Mn.shape for Mn in Mns])
         self.print_number_of_floats(Mns)
+
+    def overlap(self, product_state_1, product_state_2=None):
+        if product_state_2 is None:
+            product_state_2 = product_state_1
+
+
+        left = np.tensordot(product_state_1[0], product_state_2[0].conj(), ((0,1),(0,1)))
+        for Mn_1, Mn_2 in zip(product_state_1[1:],product_state_2[1:]):
+            right = np.tensordot(Mn_1, Mn_2.conj(), (1,1))
+            left = np.tensordot(left, right.conj(), ((0,1),(0,2)))
+
+
+        return left[0,0]
+
 
     @task_decorator
     def task1d(self):
         E, psi0 = self.get_ground_state()
         Mns_ex = self.compress(psi0, self.L, 256)
+
         Mns_compr = self.compress(psi0, self.L, 10)
 
-        # psi_ex = self.get_product(Mns_ex)
-        # psi_compr = self.get_product(Mns_compr)
-        # print(psi_ex, psi_compr)
 
-        a = self.product(Mns_ex)
+        overlap_exact_exact = self.overlap(Mns_ex)
+        overlap_exact_compr = self.overlap(Mns_ex, Mns_compr)
+        print('overlap of psi_exact with itself: ',overlap_exact_exact)
+        print('overlap of psi_exact with psi_compr: ',overlap_exact_compr)
 
-        # a = functools.partial(functools.reduce(np.tensordot, Mns), axes=([1,2], [1, 0]))
+    @task_decorator
+    def task1f(self):
+        psi = np.zeros(int(2**self.L))
+        psi[0] = 1
+        E, psi0 = self.get_ground_state()
+        mps = self.compress(psi, self.L, 2)
+        print(mps[0])
+        print([mn.shape for mn in mps])
+        mps0 = self.compress(psi0, self.L, 2**(self.L//2))
+
+        overlap_up = self.overlap(mps, mps0)
+        print(overlap_up)
+
+
+
 
     def compress(self, psi, L, chimax):
         Mns = []
@@ -108,7 +139,9 @@ class MatrixProductStates():
 
 
 if __name__ == '__main__':
-    part1 = MatrixProductStates(L=14, J=1, g=1.5)
-    part1.task1a()
+    part1 = MatrixProductStates(L=14, J=1, g=5)
+    # part1.task1a()
+    # part1.task1b()
     # part1.task1c()
     part1.task1d()
+    part1.task1f()
