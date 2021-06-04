@@ -20,7 +20,7 @@ Sminus = sparse.csr_matrix([[0., 0.], [1., 0.]])
 
 
 def singesite_to_full(op, i, L):
-    op_list = [Id]*L  # = [Id, Id, Id ...] with L entries
+    op_list = [Id] * L  # = [Id, Id, Id ...] with L entries
     op_list[i] = op
     full = op_list[0]
     for op_i in op_list[1:]:
@@ -38,9 +38,9 @@ def gen_sz_list(L):
 
 def gen_hamiltonian(sx_list, sz_list, g, J=1.):
     L = len(sx_list)
-    H = sparse.csr_matrix((2**L, 2**L))
+    H = sparse.csr_matrix((2 ** L, 2 ** L))
     for j in range(L):
-        H = H - J *( sx_list[j] * sx_list[(j+1)%L])
+        H = H - J * (sx_list[j] * sx_list[(j + 1) % L])
         H = H - g * sz_list[j]
     return H
 
@@ -52,16 +52,16 @@ def lanczos(psi0, H, N=200, stabilize=False):
                          "i.e., a numpy array with a single dimension of len 2**L")
     if H.shape[1] != psi0.shape[0]:
         raise ValueError("Shape of H doesn't match len of psi0.")
-    psi0 = psi0/np.linalg.norm(psi0)
+    psi0 = psi0 / np.linalg.norm(psi0)
     vecs = [psi0]
     T = np.zeros((N, N))
     psi = H @ psi0  # @ means matrix multiplication
     # and works both for numpy arrays and scipy.sparse.csr_matrix
     alpha = T[0, 0] = np.inner(psi0.conj(), psi).real
-    psi = psi - alpha* vecs[-1]
+    psi = psi - alpha * vecs[-1]
     for i in range(1, N):
         beta = np.linalg.norm(psi)
-        if beta  < 1.e-13:
+        if beta < 1.e-13:
             print("Lanczos terminated early after i={i:d} steps:"
                   "full Krylov space built".format(i=i))
             T = T[:i, :i]

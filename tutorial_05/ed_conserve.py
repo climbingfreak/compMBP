@@ -31,15 +31,18 @@ def is_representative(s, k, N):
     Returns -1 if s is not a representative.
     If |s> is a representative, return the periodicity R,
     i.e. the smallest integer R > 0 such that T**R |s> = |s>."""
+
     t = s
     for i in range(N):
         t = translate(t, N)
+
         if t < s:
             return -1  # there is a smaller representative in the orbit
         elif (t == s):
             if (np.mod(k, N/(i+1)) != 0):
                 return -1  # periodicty incompatible with k
             else:
+
                 return i+1
 
 
