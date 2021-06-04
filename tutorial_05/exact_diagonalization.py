@@ -1,4 +1,9 @@
 # provides the functions of last weeks tasks
+import numpy as np
+import scipy
+from scipy import sparse
+import scipy.sparse.linalg
+import matplotlib.pyplot as plt
 
 
 Id = sparse.csr_matrix(np.eye(2))
@@ -29,7 +34,7 @@ def gen_hamiltonian(sx_list, sz_list, g, J=1., bc="periodic"):
         for j in range(L):
             H = H - J *( sx_list[j] * sx_list[(j+1)%L])
             H = H - g * sz_list[j]
-    elif bc = "open":
+    elif bc == "open":
         for j in range(L-1):
             H = H - J *( sx_list[j] * sx_list[(j+1)])
             H = H - g * sz_list[j]
