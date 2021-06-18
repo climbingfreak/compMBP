@@ -83,6 +83,22 @@ class MatrixProductStates():
 
         # a = functools.partial(functools.reduce(np.tensordot, Mns), axes=([1,2], [1, 0]))
 
+        @task_decorator
+        def task1e(self):
+            E, psi0 = self.get_ground_state()
+            Mns_ex = self.compress(psi0, self.L, 256)
+            Mns_compr = self.compress(psi0, self.L, 10)
+
+            contracted_list_Mns_ex = []
+            contracted_list_Mns_compr = []
+            for Mn in Mns_ex:
+                contracted_list_Mns_ex.append(np.inner(Mn, Mn.conj()))
+
+            for Mn in Mns_compr:
+                contracted_list_Mns_ex.append(np.inner(Mn, Mn.conj()))
+
+
+
     def compress(self, psi, L, chimax):
         Mns = []
         for n in range(L):
@@ -110,5 +126,5 @@ class MatrixProductStates():
 if __name__ == '__main__':
     part1 = MatrixProductStates(L=14, J=1, g=1.5)
     part1.task1a()
-    # part1.task1c()
-    part1.task1d()
+    part1.task1b()
+    # part1.task1d()
